@@ -71,12 +71,12 @@ fi
 
 if [[ "$check" == "many tries" ]]; then
 
-printf "\e[1;31m [*] Changing ip...\n\e[0m"
+printf "\e[1;31m [*] Changing IP Address...\n\e[0m"
 changeip 
 fi
 if [[ "$check" == "Please wait" ]]; then
 
-printf "\e[1;31m [*] Changing ip...\n\e[0m"
+printf "\e[1;31m [*] Changing IP Address...\n\e[0m"
 changeip 
 fi
 
