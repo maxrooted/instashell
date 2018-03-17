@@ -81,7 +81,7 @@ fi
 if [[ "$check" == "challenge" ]]; then
 printf "\e[1;92m [*] Password Found: %s\n" $pass
 printf "\e[1;92m [*] Challenge required\n"
-printf "Username: %s, Password: %s" $user $pass >> found.instashell
+printf "Username: %s, Password: %s\n" $user $pass >> found.instashell
 printf "\e[1;92m [*] Saved:\e[0m\e[1;77m found.instashell \n\e[0m"
 exit 1
 fi
