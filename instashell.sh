@@ -8,6 +8,22 @@ if [[ "$(id -u)" -ne 0 ]]; then
 fi
 }
 
+dependencies() {
+
+command -v openssl > /dev/null 2>&1 || { echo >&2 "I require openssl but it's not installed. Aborting."; exit 1; }
+command -v tor > /dev/null 2>&1 || { echo >&2 "I require tor but it's not installed. Aborting."; exit 1; }
+command -v curl > /dev/null 2>&1 || { echo >&2 "I require curl but it's not installed. Aborting."; exit 1; }
+command -v awk > /dev/null 2>&1 || { echo >&2 "I require awk but it's not installed. Aborting."; exit 1; }
+command -v head > /dev/null 2>&1 || { echo >&2 "I require head but it's not installed. Aborting."; exit 1; }
+command -v fold > /dev/null 2>&1 || { echo >&2 "I require fold but it's not installed. Aborting."; exit 1; }
+command -v cat > /dev/null 2>&1 || { echo >&2 "I require cat but it's not installed. Aborting."; exit 1; }
+if [ $(ls /dev/urandom >/dev/null; echo $?) == "1" ]; then
+echo "/dev/urandom not found!"
+exit 1
+fi
+
+}
+
 banner() {
 
 printf "\e[1;92m     _                                   _             _  _           \e[0m\n"
@@ -17,12 +33,13 @@ printf "\e[1;92m ) )| ||  _ \  /___)(_   _)(____ | /___)|  _ \ | ___ || || |    
 printf "\e[1;77m(_/ | || | | ||___ |  | |_ / ___ ||___ || | | || ____|| || |  _____   \e[0m\n"
 printf "\e[1;77m    |_||_| |_|(___/    \__)\_____|(___/ |_| |_||_____) \_)\_)(_____)  \e[0m\n"
 printf "\n"
-printf "\e[1;77m\e[45m                     Instagram Brute Forcer. Author: @thelinuxchoice\e[0m\n"
+printf "\e[1;77m\e[45m       Instagram Brute Forcer v1.1 Author: github.com/thelinuxchoice\e[0m\n"
 printf "\n"
 }
 
 banner
 checkroot
+dependencies
 read -p $'\e[1;92mUsername account: \e[0m' user
 read -p $'\e[1;92mPassword List: \e[0m' wl_pass
 
