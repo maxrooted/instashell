@@ -14,13 +14,14 @@ command -v openssl > /dev/null 2>&1 || { echo >&2 "I require openssl but it's no
 command -v tor > /dev/null 2>&1 || { echo >&2 "I require tor but it's not installed. Aborting."; exit 1; }
 command -v curl > /dev/null 2>&1 || { echo >&2 "I require curl but it's not installed. Aborting."; exit 1; }
 command -v awk > /dev/null 2>&1 || { echo >&2 "I require awk but it's not installed. Aborting."; exit 1; }
-command -v head > /dev/null 2>&1 || { echo >&2 "I require head but it's not installed. Aborting."; exit 1; }
-command -v fold > /dev/null 2>&1 || { echo >&2 "I require fold but it's not installed. Aborting."; exit 1; }
 command -v cat > /dev/null 2>&1 || { echo >&2 "I require cat but it's not installed. Aborting."; exit 1; }
+command -v tr > /dev/null 2>&1 || { echo >&2 "I require tr but it's not installed. Aborting."; exit 1; }
 if [ $(ls /dev/urandom >/dev/null; echo $?) == "1" ]; then
 echo "/dev/urandom not found!"
 exit 1
 fi
+#command -v head > /dev/null 2>&1 || { echo >&2 "I require head but it's not installed. Aborting."; exit 1; }
+#command -v fold > /dev/null 2>&1 || { echo >&2 "I require fold but it's not installed. Aborting."; exit 1; }
 
 }
 
@@ -62,10 +63,16 @@ sleep 3
 
 }
 
-string8=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 8 | head -n 1)
-string4=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 4 | head -n 1)
-string12=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 12 | head -n 1)
-string16=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 16 | head -n 1)
+string4=$(openssl rand -hex 32 | tr -d /=+ | cut -c 4)
+string8=$(openssl rand -hex 32 | tr -d /=+ | cut -c 8)
+string12=$(openssl rand -hex 32 | tr -d /=+ | cut -c 12)
+string16=$(openssl rand -hex 32 | tr -d /=+ | cut -c 16)
+
+#string8=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 8 | head -n 1)
+#string4=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 4 | head -n 1)
+#string12=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 12 | head -n 1)
+#string16=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 16 | head -n 1)
+
 device="android-$string16"
 uuid=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 32 | head -n 1)
 phone="$string8-$string4-$string4-$string4-$string12"
