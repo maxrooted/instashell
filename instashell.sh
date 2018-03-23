@@ -126,7 +126,7 @@ checktor
 count_pass=$(wc -l $wl_pass | cut -d " " -f1)
 printf "\e[1;92mUsername:\e[0m\e[1;77m %s\e[0m\n" $user
 printf "\e[1;92mWordlist:\e[0m\e[1;77m %s (%s)\e[0m\n" $wl_pass $count_pass
-printf "\e[1;91m[*] Press Ctrl + C to save session\n\e[0m"
+printf "\e[1;91m[*] Press Ctrl + C to stop or save session\n\e[0m"
 
 startline=1
 endline="$threads"
