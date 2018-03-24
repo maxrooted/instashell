@@ -11,11 +11,27 @@ Instashell is an Shell Script to perform multi-threaded brute force attack again
 - Anonymous attack through TOR
 - Multi-thread (400 pass/min, 20 threads)
 
+### Requires:
+
+Tor:
+```
+apt-get install -y tor
+```
+Curl: 
+```
+apt-get install -y curl
+```
+Openssl:
+```
+apt-get install -y openssl
+```
+
 ### Usage:
 ```
 git clone https://github.com/thelinuxchoice/instashell
 cd instashell
 chmod +x instashell.sh
+service tor start
 sudo ./instashell.sh
 ```
 
