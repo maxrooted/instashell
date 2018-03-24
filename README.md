@@ -4,13 +4,12 @@
 
 Instashell is an Shell Script to perform multi-threaded brute force attack against Instagram, this script can bypass login limiting on wrong passwords, and it can test infinite number of passwords with a rate of +400 passwords/min.
 
-![instashell](https://user-images.githubusercontent.com/34893261/37567580-c98d3a58-2aa7-11e8-9022-a5bc86326302.png)
-
+![insta](https://user-images.githubusercontent.com/34893261/37858917-a6f23ae2-2eea-11e8-9f58-9a688390cfb0.png)
 
 ### Features
 - Save/Resume sessions
 - Anonymous attack through TOR
-- Multi-thread (400 pass/min)
+- Multi-thread (400 pass/min, 20 threads)
 
 ### Usage:
 ```
