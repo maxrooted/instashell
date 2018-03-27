@@ -1,4 +1,4 @@
-# Instashell v1.5
+# Instashell v1.5.2
 ## Author: github.com/thelinuxchoice
 ## IG: instagram.com/thelinuxchoice
 
